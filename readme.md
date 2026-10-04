@@ -46,6 +46,7 @@ CD8胞外结构域属于免疫球蛋白样折叠，其表面以相对开放的�
 
 清洗完成输出文件：TargetCAR_VLP_AI_Design/data/CD8A_clean.pdb。校验要求：仅保留 A 链1‑114残基，无杂质原子，主链原子完整，Ramachandran 二面角无严重构象异常。该清洗后文件直接作为下游 RFdiffusion 的输入。
 
+```python
 python src/stage1_clean_receptor.py \
 --input data/inputs/1CD8.pdb \
 --output data/inputs/CD8A_clean.pdb \
