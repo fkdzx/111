@@ -58,7 +58,7 @@ python src/stage1_clean_receptor.py \
 
 将 CD8α A 链1‑114残基设置为固定刚体对接受体，采样过程受体构象保持不变。选取 Leu25、Arg27、Lys45、Thr47、Asp75等关键功能区残基上施加空间接触势能引导 。采用 contig 配置contigmap.contigs=\[A1‑114/0 65‑85\]，生成 65‑85 个氨基酸长度的微型结合肽段，逆向去噪步数设置 50 步，批量产出多套候选主链。设置初筛条件：Ramachandran 构象合理，无严重原子穿模，生成的多肽骨架落在 CD8α 关键功能区残基 5 Å 空间范围内，不合格骨架直接淘汰，不进入序列逆折叠。核心产出骨架：results/01_rfdiffusion/cd8_binder_0.pdb 与 cd8_binder_1.pdb。
 
-python src/stage2_run_rfdiffusion.py \\
+```python src/stage2_run_rfdiffusion.py \\
 
 --target_pdb data/inputs/CD8A_clean.pdb \\
 
@@ -71,14 +71,14 @@ python src/stage2_run_rfdiffusion.py \\
 --steps 50 \\
 
 --output_dir results/01_rfdiffusion/
-
+```
 **3.3 阶段三：ProteinMPNN 引导的氨基酸序列设计**
 
 该阶段核心目标是在给定 RFdiffusion 输出的主链骨架坐标下，求解热力学最优氨基酸序列。模型构建蛋白质空间近邻图，依靠高斯径向基、局部相对四元数构建完全 SE (3) 不变的边特征，通过多层消息传递 GNN 完成几何特征提取。
 
 采用随机排列自回归解码策略进行序列采样，分别使用 T=0.3 获取低能量稳定序列、T=0.5 增加序列多样性。通过bias_AA.json配置成药性惩罚矩阵，Cys 施加‑10.0强惩罚、Met 施加‑5.0 惩罚，从源头抑制游离半胱氨酸和甲硫氨酸，规避二硫键错配聚集与氧化失活风险。输出 FASTA 格式候选序列文库。过滤全局似然 Score＞1.85 的高能量不稳定序列，强制核验序列 Cys=0、Met=0，筛选后的合格序列送入 BOLTZ‑2 复合物共折叠评估。
 
-python src/stage3_run_mpnn.py \\
+```python src/stage3_run_mpnn.py \\
 
 --backbone_dir results/01_rfdiffusion/ \\
 
@@ -89,21 +89,21 @@ python src/stage3_run_mpnn.py \\
 --score_threshold 1.85 \\
 
 --output_dir results/02_proteinmpnn/
-
+```
 **3.4 阶段四：Boltz‑2 结构亲和力预测**
 
 完成 ProteinMPNN 筛选后，候选 Mini‑binder 序列会与 CD8α 基准序列配对，生成 BOLTZ‑2 运行所需标准化 YAML 配置文件，实现多链任务自动化拼装。BOLTZ‑2 搭载 48 层 Pairformer 核心引擎，脱离 MSA 进化先验，进行结构亲和力预测。网络依靠三角乘法更新维持三维几何约束，在笛卡尔全原子点云层面执行扩散去噪；同时引入碰撞损失、键长与键角损失项，约束原子立体化学，规避不合理构象。
 
 运行全原子物理共折叠计算后，批量解析多维打分矩阵，提取复合物 ipTM（界面结合置信度）、pTM（全局拓扑置信度）以及 Complex pLDDT（复合物局部微环境可信度）关键指标。同时调用经过 FEP 自由能微扰数据集微调的亲和力预测头，回归结合自由能，换算解离常数。
 
-python src/stage4_run_boltz2.py \\
+```python src/stage4_run_boltz2.py \\
 
 --seq_dir results/02_proteinmpnn/ \\
 
 --target_seq "SQFRVSPLDRTWNLGETVELKCQVLLSNPTSGCSWLFQPRGAAASPTFLLYLSQNKPKAAEGLDTQRFSGKRLGDTFVLTLSDFRRENEGYYFCSALSNSIMYFSHFVPVFLPAKPTTTPAP" \\
 
 --output_dir results/03_boltz2/
-
+```
 全量 28 个样本预测打分总表（按 ipTM 降序排列），全量打分数据归档于results/results.csv：
 
 <table>
@@ -394,20 +394,20 @@ RFdiffusion、ProteinMPNN、BOLTZ‑2 三者 PyTorch、CUDA 版本依赖互相�
 
 \# 1. 解析打分与接触足迹
 
-python src/stage5_evaluate_properties.py \\
+```python src/stage5_evaluate_properties.py \\
 
 --predictions_dir results/03_boltz2/ \\
 
 --output_csv results/results.csv
-
+```
 \# 2. 导出 300 DPI 综合 4-Panel 评价图谱
 
-python src/plot_results.py \\
+```python src/plot_results.py \\
 
 --input_csv results/results.csv \\
 
 --output_fig results/figures/cd8_binders_evaluation.png
-
+```
 **3.6 CD8**α **微型结合肽段从头计算设流程图**
 
 为便于直观理解，我们绘制了从 CD8 分子清洗、AI 骨架扩散与序列逆折叠，到物理终审及湿实验验证的 5 步全流程闭环图（图1）。
@@ -424,15 +424,15 @@ python src/plot_results.py \\
 
 \# 1. 大赛复核主入口（复核候选清单、打分指标及三维结构完整性）
 
-python predict.py
+```python predict.py```
 
 \# 2. 一键从头设计流水线（阶段一至阶段三：受体清洗 → 扩散骨架 → MPNN逆折叠）
 
-python design.py
+```python design.py```
 
 \# 3. 一键虚拟筛选与评估流水线（阶段四至阶段五：Boltz-2盲测 → 指标汇总→ 成果制图）
 
-python screen.py
+```python screen.py```
 
 **四、可视化结果**
 
