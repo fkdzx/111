@@ -51,7 +51,7 @@ python src/stage1_clean_receptor.py \
 --input data/inputs/1CD8.pdb \
 --output data/inputs/CD8A_clean.pdb \
 --chain A --start_res 1 --end_res 114
-
+```
 **3.2 阶段二：RFdiffusion 利用分子表位引导生成三维骨架**
 
 在骨架生成阶段，RFdiffusion 将每个氨基酸残基视作 SE (3) 流形上的刚体单元，通过前向 SDE 加噪、逆向 SDE 去噪流程，从高斯白噪声直接生成全新蛋白质主链，不依赖天然蛋白模板。底层依托 RoseTTAFold 三轨网络与 IPA 不变点注意力，保证计算过程严格 SE (3) 等变性；逆向去噪过程可叠加外部势能梯度，实现面向靶标表位的定向生成。
