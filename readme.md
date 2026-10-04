@@ -581,7 +581,7 @@ Top 5 候选分子的多维理化性质相图显示（图 4C），Rank 1 处于�
 
 ├── plot_rfdiff_result.py \# RFdiffusion 采样结果制图脚本
 
-├── prepare_cd8.py \# CD8 受体前处理提取脚本
+├── prepare_cd8.py \# CD8 分子前处理提取脚本
 
 ├── README.md \# src 模块使用与调用说明
 
