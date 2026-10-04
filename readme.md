@@ -414,7 +414,9 @@ python src/plot_results.py \\
 
 为便于直观理解，我们绘制了从 CD8 分子清洗、AI 骨架扩散与序列逆折叠，到物理终审及湿实验验证的 5 步全流程闭环图（图1）。
 
-<img src="media/media/image1.png" style="width:6.06319in;height:2.83542in" alt="84e0b0526dc10330e36e78f364cdaabe" />
+<div align="center">
+  <img src="media/media/image1.png" style="width: 80%;" alt="流程图" />
+</div>
 
 图1 CD8α 微型结合肽段从头计算设流程图
 
