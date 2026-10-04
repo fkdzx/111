@@ -418,7 +418,7 @@ python src/plot_results.py \\
   <img src="media/media/image1.png" style="width: 80%;" alt="流程图" />
 </div>
 
-图1 CD8α 微型结合肽段从头计算设流程图
+                                       图1 CD8α 微型结合肽段从头计算设流程图
 
 **3.6 项目集成与验证**
 
